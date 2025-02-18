@@ -147,4 +147,35 @@ describe('CartController (e2e)', () => {
         expect((res.body as Cart).items.length).toBe(0);
       });
   });
+
+  it('/cart/:cartId/updateItem/:itemId (PATCH)', async () => {
+    const createCartDto: CreateCartDto = {
+      name: 'Test Cart',
+      items: [],
+    };
+    const bodyCreate = await request(app.getHttpServer())
+      .post('/cart')
+      .send(createCartDto);
+    const createdCart = bodyCreate.body as Cart;
+
+    const addItemDto: AddItemDto = { name: 'Test Item', quantity: 1 };
+    const bodyAddItem = await request(app.getHttpServer())
+      .post(`/cart/${createdCart.cartId}/addItem`)
+      .send(addItemDto);
+    const updatedCart = bodyAddItem.body as Cart;
+
+    const itemId = updatedCart.items[0].id;
+    const updateItemDto = { name: 'Updated Item', quantity: 2 };
+    return request(app.getHttpServer())
+      .patch(`/cart/${createdCart.cartId}/updateItem/${itemId}`)
+      .send(updateItemDto)
+      .expect(200)
+      .expect((res) => {
+        expect((res.body as Cart).items.length).toBe(1);
+        expect((res.body as Cart).items[0].name).toBe(updateItemDto.name);
+        expect((res.body as Cart).items[0].quantity).toBe(
+          updateItemDto.quantity,
+        );
+      });
+  });
 });

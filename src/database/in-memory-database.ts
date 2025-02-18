@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { UpdateItemDto } from 'src/cart/dto/update-item.dto';
 import { CreateCartDto } from '../cart/dto/create-cart.dto';
 import { UpdateCartDto } from '../cart/dto/update-cart.dto';
 import { Cart } from '../cart/entities/cart.entity';
@@ -68,6 +69,23 @@ export class InMemoryDatabase {
     }
 
     cart.items = cart.items.filter((item) => item.id !== itemId);
+
+    return cart;
+  }
+
+  updateItemInCart(cartId: string, itemId: string, item: UpdateItemDto) {
+    const cart = this.findCartById(cartId);
+    if (!cart) {
+      return null;
+    }
+
+    const itemIndex = cart.items.findIndex((item) => item.id === itemId);
+    if (itemIndex < 0) {
+      return null;
+    }
+
+    cart.items[itemIndex].name = item.name;
+    cart.items[itemIndex].quantity = item.quantity;
 
     return cart;
   }

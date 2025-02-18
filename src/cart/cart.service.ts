@@ -3,6 +3,7 @@ import { InMemoryDatabase } from '../database/in-memory-database';
 import { AddItemDto } from './dto/add-item.dto';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 import { Item } from './entities/item.entity';
 
 @Injectable()
@@ -36,5 +37,13 @@ export class CartService {
 
   removeItem(cartId: string, itemId: string) {
     return this.inMemoryDatabase.removeItemFromCart(cartId, itemId);
+  }
+
+  updateItem(cartId: string, itemId: string, updateItemDto: UpdateItemDto) {
+    return this.inMemoryDatabase.updateItemInCart(
+      cartId,
+      itemId,
+      updateItemDto,
+    );
   }
 }
